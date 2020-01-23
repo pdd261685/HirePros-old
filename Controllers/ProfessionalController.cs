@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HirePros.Data;
 using HirePros.Models;
 using HirePros.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,19 +21,30 @@ namespace HirePros.Controllers
         }
         public IActionResult Index()
         {
-            IList<Professional> professionals = context.Professionals.Include(p => p.Services).ToList();
-            //accessed by context as Professionals ia a dbset that holds on to Professional class objects and turn that dbset into a list
+            if (HttpContext.Session.GetString("UserName") == "Admin")
+            {
+                IList<Professional> professionals = context.Professionals.Include(p => p.Services).ToList();
+                //accessed by context as Professionals ia a dbset that holds on to Professional class objects and turn that dbset into a list
 
 
-            return View(professionals);
+                return View(professionals);
+            }
+
+            return Redirect("User/Index?username="+ HttpContext.Session.GetString("UserName"));
+            //return Redirect("Home");
+            
         }
 
         public IActionResult Add()
         {
             //Viemodel will take the list of categories and create a select list with the below
-            AddProfessionalViewModel addProfessionalViewModel = new AddProfessionalViewModel(context.Services.ToList());
-            ViewBag.Title = "Professionals";
-            return View(addProfessionalViewModel);
+            if (HttpContext.Session.GetString("UserName") == "Admin")
+            {
+                AddProfessionalViewModel addProfessionalViewModel = new AddProfessionalViewModel(context.Services.ToList());
+                ViewBag.Title = "Professionals";
+                return View(addProfessionalViewModel);
+            }
+            return Redirect("/User/Index?username=" + HttpContext.Session.GetString("UserName"));
         }
 
         [HttpPost]

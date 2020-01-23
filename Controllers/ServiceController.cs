@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HirePros.Data;
 using HirePros.Models;
 using HirePros.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HirePros.Controllers
@@ -21,15 +22,24 @@ namespace HirePros.Controllers
         //Get Controller
         public IActionResult Index()
         {
-            List<Services> servs = context.Services.ToList();
-            return View(servs);
+            if (HttpContext.Session.GetString("UserName") == "Admin")
+            {
+                List<Services> servs = context.Services.ToList();
+                return View(servs);
+            }
+            return Redirect("User/Index?username=" + HttpContext.Session.GetString("UserName"));
         }
 
         //Get Controller
         public IActionResult Add()
         {
-            AddServiceViewModel addServiceViewModel = new AddServiceViewModel();
-            return View(addServiceViewModel);
+            if (HttpContext.Session.GetString("UserName") == "Admin")
+            {
+                AddServiceViewModel addServiceViewModel = new AddServiceViewModel();
+                return View(addServiceViewModel);
+            }
+            return Redirect("/User/Index?username=" + HttpContext.Session.GetString("UserName"));
+
 
         }
 

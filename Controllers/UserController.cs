@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using HirePros.Data;
 using HirePros.Models;
 using HirePros.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+//using System.Web.MVC;
 
 namespace HirePros.Controllers
 {
@@ -49,6 +51,7 @@ namespace HirePros.Controllers
                 context.SaveChanges();
 
                 return Redirect("Index?username=" + newUser.Username);
+                //return Redirect("VieUserProf/"+newUser.ID);
 
             }
 
@@ -67,7 +70,14 @@ namespace HirePros.Controllers
             User newUser = context.Users.Single(u => u.Username == addUserViewModel.Username);
             if (newUser!=null)
             {
-                return Redirect("Index?username=" + newUser.Username);
+               
+                //HttpContext.Session session= new HttpContext.Session() { newUser.Username };
+                HttpContext.Session.SetString("UserName", newUser.Username);
+                if(newUser.Username=="Admin")
+                {
+                    return Redirect("Index?username="+newUser.Username);
+                }
+                return Redirect("ViewUserProf/" + newUser.ID);
             }
             
             return View(addUserViewModel);
