@@ -22,12 +22,11 @@ namespace HirePros.Controllers
         //Get Controller
         public IActionResult Index()
         {
-            if (HttpContext.Session.GetString("UserName") == "Admin")
-            {
-                List<Services> servs = context.Services.ToList();
-                return View(servs);
-            }
-            return Redirect("User/Index?username=" + HttpContext.Session.GetString("UserName"));
+            
+            List<Services> servs = context.Services.ToList();
+            return View(servs);
+            
+            //return Redirect("User/Index?username=" + HttpContext.Session.GetString("UserName"));
         }
 
         //Get Controller
